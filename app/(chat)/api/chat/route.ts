@@ -291,7 +291,8 @@ export async function POST(request: Request) {
           onEnd() {
             stopWaitingStatus();
           },
-          onError() {
+          onError({ error }) {
+            console.error("streamText error in chat API:", error);
             stopWaitingStatus();
           },
           providerOptions: {
@@ -330,6 +331,10 @@ export async function POST(request: Request) {
 
         dataStream.merge(
           toUIMessageStream({
+            onError: (error) => {
+              console.error("Model stream error in chat API:", error);
+              return "Oops, an error occurred!";
+            },
             sendReasoning: isReasoningModel,
             stream: result.stream,
           })
